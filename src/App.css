@@ -1,38 +1,36 @@
+@font-face {
+  font-family: patrickHand;
+  src: url(style/PatrickHand-Regular.ttf);
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+p {
+  margin: 0px;
+}
+
+.logo {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 100px;
+}
+
 .App {
   text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100px;
+  height:100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.content {
+  background: linear-gradient(0deg, #fad372 0%, #e4d851 100%);
+  height:100%; 
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.content.today {
+  background: linear-gradient(180deg, #00fbff 0%, #b4e5fe 100%);
 }

@@ -1,102 +1,104 @@
 import React from 'react';
+import DateTimeDisplay from './DateTimeDisplay';
+import { useCountdown } from '../hooks/useCountdown';
+import Cake from './Cake';
+import styled from 'styled-components';
+import { useEffect } from 'react';
 
-class Countdown extends React.Component {
-  constructor(props) {
-    super(props);
+const BirthdayOrInvalid = ({text}) => {
+  return (
+    <DisplayContainer>
+      <Card>
+        <CardText>{text}</CardText>
+        <Cake />
+      </Card>
+    </DisplayContainer>
+  );
+};
 
-    this.state = {
-      days: 0,
-      hours: 0,
-      min: 0,
-      sec: 0,
+const ShowCounter = ({ days, hours, minutes, seconds }) => {
+  return (
+    <Counter>
+        <DateTimeDisplay value={days} type={days <= 1 ? 'Day' : 'Days'} isAlmost={days <= 3} />
+        <DateTimeDisplay value={hours} type={'Hours'} isAlmost={days <= 3} />
+        <DateTimeDisplay value={minutes} type={'Min'} isAlmost={days <= 3} />
+        <DateTimeDisplay value={seconds} type={'Sec'} isAlmost={days <= 3} />
+    </Counter>
+  );
+};
+
+const Countdown = ({ date, setParentCounter }) => {
+  const [days, hours, minutes, seconds] = useCountdown(date);
+
+  useEffect(() => {
+    if (days === -1) {
+      setParentCounter('today');
+    } 
+  }, [days, setParentCounter]);
+
+  if (days + hours + minutes + seconds <= 0) {
+    if (days === -1) {
+      return <BirthdayOrInvalid text="Today it's CTO's BIRTHDAY!!" />;
     }
-  }
-
-  componentDidMount() {
-    // update every second
-    this.interval = setInterval(() => {
-      const date = this.calculateCountdown(this.props.date);
-      date ? this.setState(date) : this.stop();
-    }, 1000);
-  }
-
-  componentWillUnmount() {
-    this.stop();
-  }
-
-  calculateCountdown(endDate) {
-    let diff = (Date.parse(new Date(endDate)) - Date.parse(new Date())) / 1000;
-
-    const timeLeft = {
-      years: 0,
-      days: 0,
-      hours: 0,
-      min: 0,
-      sec: 0,
-      millisec: 0,
-    };
-
-    // calculate time difference between now and expected date
-    if (diff >= (365.25 * 86400)) { // 365.25 * 24 * 60 * 60
-      timeLeft.years = Math.floor(diff / (365.25 * 86400));
-      diff -= timeLeft.years * 365.25 * 86400;
-    }
-    if (diff >= 86400) { // 24 * 60 * 60
-      timeLeft.days = Math.floor(diff / 86400);
-      diff -= timeLeft.days * 86400;
-    }
-    if (diff >= 3600) { // 60 * 60
-      timeLeft.hours = Math.floor(diff / 3600);
-      diff -= timeLeft.hours * 3600;
-    }
-    if (diff >= 60) {
-      timeLeft.min = Math.floor(diff / 60);
-      diff -= timeLeft.min * 60;
-    }
-    timeLeft.sec = diff;
-
-    return timeLeft;
-  }
-
-  stop() {
-    clearInterval(this.interval);
-  }
-
-  addLeadingZeros(value) {
-    value = String(value);
-    while (value.length < 2) {
-      value = '0' + value;
-    }
-    return value;
-  }
-
-  render() {
-    const countDown = this.state;
-
+    return <BirthdayOrInvalid text="Invalid Date for CTO's BIRTHDAY"/>;
+  } else {
     return (
-      <div className="Countdown">
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.days)}</strong>
-          <span>{countDown.days === 1 ? 'Day' : 'Days'}</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.hours)}</strong>
-          <span>Hours</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.min)}</strong>
-          <span>Min</span>
-        </span>
-
-        <span className="countdown-col">
-          <strong>{this.addLeadingZeros(countDown.sec)}</strong>
-          <span>Sec</span>
-        </span>
-      </div>
+      <DisplayContainer>
+        <ShowCounter
+          days={days}
+          hours={hours}
+          minutes={minutes}
+          seconds={seconds}
+        />
+        <Card>
+          <CardText>to CTO's BIRTHDAY!</CardText>
+          <Cake />
+        </Card>
+      </DisplayContainer>
     );
   }
-}
+};
+
+const DisplayContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: patrickHand;
+`;
+
+const Card = styled.div`
+  display: flex;
+  font-size: 42px;
+  align-items: center;
+  justify-content: space-evenly;
+  height: 150px;
+  margin-top: 50px;
+  background: linear-gradient(108.72deg, #fff7f95c 0%, #fbf9f98c 100%);
+  border-radius: 20px;
+  border: thin solid #fef7ff36;
+  width: 500px;
+
+  @media (max-width: 540px) {
+    flex-direction: column;
+    height: 300px;
+    width: auto;
+    padding: 0px 15px;
+  }
+`;
+
+const CardText = styled.div`
+  width: 300px;
+`;
+
+const Counter = styled.div`
+  display: flex;
+  justify-content: center;
+  @media (max-width: 540px) {
+    flex-direction: row;
+    width: 100%;
+    margin-top: 50px;
+    margin-left: 40px;
+  }
+`;
 
 export default Countdown;
